@@ -19,7 +19,7 @@ const CalibrationGraph = ({exercise, data}) => {
         if(exercise === 'RespiratoryFrequency') setLabelY('RPM')
         if(exercise === 'result') setLabelY('Pontos')
         if(exercise === 'scoreRatio') setLabelY('Porcentagem (%)')
-    })
+    }, [exercise])
 
     return (
     <Box sx={{ height: 500, overflow: "hidden" }}>
