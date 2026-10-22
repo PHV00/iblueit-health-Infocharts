@@ -45,8 +45,8 @@ const ResultPage = () => {
   const [device, setDevice] = useState("Pitaco");
   const [visualization, setVisualization] = useState("result");
   const [visualizationAfterRequest, setVisualizationAfterRequest] = useState("result");
-  const [startDate, setStartDate] = useState();
-  const [finalDate, setFinalDate] = useState();
+  const [, setStartDate] = useState();
+  const [, setFinalDate] = useState();
   const [microCardsValues, setMicroCardsValues] = useState([
     { value: 0, title: "Pontuação acumulada" },
     { value: 0, title: "Níveis desbloqueados" },
