@@ -18,16 +18,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
+      - name: Set up Node.js 22 for the legacy React frontend
+        uses: actions/setup-node@v4
         with:
-          node-version: '26.x'
+          node-version: '22.x'
+          cache: 'npm'
 
-      - name: npm install, build, and test
+      # Temporary compatibility measure for React 16 and MUI 5.
+      # This ignores incompatible peerDependency declarations; it is not a library upgrade.
+      - name: Install legacy dependencies
+        run: npm install --legacy-peer-deps
+
+      # The original app imports _config.js, but only _config.template.js is tracked.
+      - name: Prepare API configuration
+        run: cp src/providers/_config.template.js src/providers/_config.js
+
+      - name: Build production frontend for Azure
+        env:
+          CI: 'true'
+          PUBLIC_URL: '/'
+          REACT_APP_BASE_URL_I_BLUE_IT: ${{ vars.REACT_APP_BASE_URL_I_BLUE_IT }}
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          if [ -z "$REACT_APP_BASE_URL_I_BLUE_IT" ]; then
+            echo "::error::Configure the repository Actions variable REACT_APP_BASE_URL_I_BLUE_IT with https://<BACKEND-HOST>/api"
+            exit 1
+          fi
+          npm run build
+
+      - name: Run non-interactive tests
+        env:
+          CI: 'true'
+        run: npm run test -- --watchAll=false --passWithNoTests
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
