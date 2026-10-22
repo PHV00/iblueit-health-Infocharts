@@ -26,11 +26,13 @@ const useStyles = makeStyles((theme) => ({
 
 const GameConfigurationCreatePage = () => {
   const context = useMyContext()
+  const patientId = context.patientId;
+  const setLoading = context.setLoading;
   const [gameParameterNeighborInformations, setGameParameterNeighborInformations] = useState([]);
 
   const classes = useStyles();
   const [phase, setPhase] = useState('');
-  const [stageId, setStageId] = useState('');
+  const [, setStageId] = useState('');
   const [level, setLevel] = useState('');
   const [Loops, setLoops] = useState('');
   const [objectSpeedFactor, setObjectSpeedFactor] = useState('');
@@ -58,17 +60,17 @@ const GameConfigurationCreatePage = () => {
       }
     }
     async function getGameParameterNeighbor() {
-      context.setLoading(true);
-      const pacientGameParameteResult = await getGameParameter(context.patientId)
+      setLoading(true);
+      const pacientGameParameteResult = await getGameParameter(patientId)
       setInputsPacientGameParameter(pacientGameParameteResult.data.data[0])
-      const result = await fetchGameParameterNeighbor(context.patientId);
+      const result = await fetchGameParameterNeighbor(patientId);
       setGameParameterNeighborInformations([...result.data.data]);
-      context.setLoading(false);
+      setLoading(false);
     };
-    if (context.patientId) {
+    if (patientId) {
       getGameParameterNeighbor();
     }
-  }, [context.patientId]);
+  }, [patientId, setLoading]);
 
   if (!context.patientId) {
     return (<Typography variant="h2" sx={{ fontSize: 20 }}>Um paciente precisa ser selecionado!</Typography>);
